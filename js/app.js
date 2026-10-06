@@ -124,9 +124,14 @@ const CAMAEL = {
           { label: "All Items", key: "all", active: true },
           { label: "Tier S (Priceless)", key: "tier-s" },
           { label: "Tier A (High)", key: "tier-a" },
-          { label: "Flora (Plants)", key: "flora" },
+          { label: "🌲 Forest", key: "biome-forest" },
+          { label: "💧 Wetland", key: "biome-wetland" },
+          { label: "🏙️ Urban Ruins", key: "biome-urban" },
+          { label: "🌊 Coastal", key: "biome-coastal" },
+          { label: "🌾 Arid / Plains", key: "biome-arid" },
+          { label: "Flora", key: "flora" },
           { label: "Materials", key: "materials" },
-          { label: "Toxic Hazards", key: "toxic" }
+          { label: "☠️ Toxic Hazards", key: "toxic" }
         ], (key) => this.filterCompendium(key, searchInput.value));
         break;
 
@@ -227,6 +232,8 @@ const CAMAEL = {
       else if (item.tier === "B") badgeClass += " tier-b";
       else if (item.tier === "DANGER") badgeClass += " badge-danger";
 
+      const firstBiome = (item.biomes && item.biomes.length > 0) ? item.biomes[0] : item.category.toUpperCase();
+
       card.innerHTML = `
         <div class="card-top">
           <div class="card-lead-symbol">${item.symbol}</div>
@@ -234,11 +241,11 @@ const CAMAEL = {
         </div>
         <div>
           <h3 class="card-title">${item.name}</h3>
-          <p class="card-desc">${item.description.substring(0, 120)}...</p>
+          <p class="card-desc">${item.description.substring(0, 115)}...</p>
         </div>
-        <div class="card-footer-meta">
+        <div class="card-footer-meta" style="flex-wrap: wrap; gap: 4px;">
           <span>${item.edibility}</span>
-          <span>${item.category.toUpperCase()}</span>
+          <span style="color: var(--accent-safe); font-weight: 600;">${firstBiome}</span>
         </div>
       `;
 
@@ -254,36 +261,83 @@ const CAMAEL = {
     else if (filterKey === "flora") items = items.filter(i => i.category === "flora");
     else if (filterKey === "materials") items = items.filter(i => i.category === "materials");
     else if (filterKey === "toxic") items = items.filter(i => i.category === "toxic");
+    else if (filterKey === "biome-forest") items = items.filter(i => i.biomes && i.biomes.some(b => b.includes("Forest")));
+    else if (filterKey === "biome-wetland") items = items.filter(i => i.biomes && i.biomes.some(b => b.includes("Wetland")));
+    else if (filterKey === "biome-urban") items = items.filter(i => i.biomes && i.biomes.some(b => b.includes("Urban")));
+    else if (filterKey === "biome-coastal") items = items.filter(i => i.biomes && i.biomes.some(b => b.includes("Coastal")));
+    else if (filterKey === "biome-arid") items = items.filter(i => i.biomes && i.biomes.some(b => b.includes("Arid")));
 
     if (query) {
       items = items.filter(i => 
         i.name.toLowerCase().includes(query) ||
         i.description.toLowerCase().includes(query) ||
         i.edibility.toLowerCase().includes(query) ||
-        i.survivalUsage.toLowerCase().includes(query)
+        i.survivalUsage.toLowerCase().includes(query) ||
+        (i.biomes && i.biomes.some(b => b.toLowerCase().includes(query)))
       );
     }
     this.renderCompendium(items);
   },
 
   showItemDetail(item) {
+    const biomesHtml = item.biomes && item.biomes.length > 0 
+      ? item.biomes.map(b => `<span class="pill-btn active" style="font-size: 10px; padding: 2px 8px; margin-right: 4px; margin-bottom: 4px; display: inline-block;">${b}</span>`).join('') 
+      : '<span style="color: var(--text-secondary);">Unspecified</span>';
+
+    const toolsHtml = item.toolsRequired && item.toolsRequired.length > 0
+      ? item.toolsRequired.map(t => `
+          <div style="padding: 10px 12px; border: 1px solid var(--border-color); background: var(--bg-secondary); margin-bottom: 8px;">
+            <div style="font-weight: 700; color: #fff;">🔧 Required: ${t.tool}</div>
+            <div style="font-size: 11px; color: var(--accent-info); margin-top: 3px;">📍 <strong>Where to acquire:</strong> ${t.acquisition}</div>
+          </div>
+        `).join('')
+      : '<p style="color: var(--text-secondary);">No specialized tools required (Forageable with bare hands).</p>';
+
+    let riskHtml = '';
+    if (item.riskMitigation) {
+      const btnAction = item.riskMitigation.solutionAction 
+        ? `<button onclick="window.navigateToSolution('${item.riskMitigation.solutionAction.section}', '${item.riskMitigation.solutionAction.targetId}')" class="pill-btn" style="background: var(--text-primary); color: #000; font-weight: 700; margin-top: 10px; cursor: pointer; padding: 8px 14px; font-size: 11px; display: inline-flex; align-items: center; gap: 6px;">
+             ⚡ ${item.riskMitigation.solutionAction.buttonText}
+           </button>` 
+        : '';
+
+      riskHtml = `
+        <div style="margin-top: 18px; padding: 14px; border: 1px solid var(--accent-alert); background: rgba(255, 77, 77, 0.08);">
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-alert); letter-spacing: 0.05em; text-transform: uppercase;">⚠️ IDENTIFIED RISK / DANGER</div>
+          <p style="margin-top: 4px; color: #ffcccc; font-size: 12px; line-height: 1.5;">${item.riskMitigation.risk}</p>
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-safe); letter-spacing: 0.05em; text-transform: uppercase; margin-top: 10px;">🛡️ HOW TO DEAL WITH IT (MITIGATION)</div>
+          <p style="margin-top: 4px; color: #ffffff; font-size: 12px; line-height: 1.5;">${item.riskMitigation.solution}</p>
+          ${btnAction}
+        </div>
+      `;
+    }
+
     this.openModal({
       title: `${item.name} (${item.symbol})`,
       content: `
-        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
           <span class="card-tier-badge ${item.tier === 'S' ? 'tier-s' : item.tier === 'A' ? 'tier-a' : item.tier === 'DANGER' ? 'badge-danger' : ''}">${item.barterValue}</span>
           <span class="card-tier-badge" style="border-color: #888;">${item.edibility}</span>
+          ${item.safetyRating ? `<span class="card-tier-badge" style="border-color: #555;">${item.safetyRating}</span>` : ''}
         </div>
-        <div class="modal-section-title">HABITAT & OCCURRENCE</div>
-        <p>${item.habitat}</p>
-        <div class="modal-section-title">DESCRIPTION & FIELD ID</div>
+
+        <div class="modal-section-title">SPECIFIC BIOMES & LOCATIONS (FOUND IN)</div>
+        <div style="margin-bottom: 14px;">
+          ${biomesHtml}
+        </div>
+
+        <div class="modal-section-title">REQUIRED TOOLS & WHERE TO ACQUIRE THEM</div>
+        <div style="margin-bottom: 14px;">
+          ${toolsHtml}
+        </div>
+
+        <div class="modal-section-title">DESCRIPTION & IDENTIFICATION</div>
         <p>${item.description}</p>
+
         <div class="modal-section-title">SURVIVAL APPLICATION & USAGE</div>
         <p>${item.survivalUsage}</p>
-        ${item.hazard ? `
-          <div class="modal-section-title" style="color: var(--accent-alert);">CRITICAL HAZARD WARNING</div>
-          <p style="color: #ff9999;">${item.hazard}</p>
-        ` : ''}
+
+        ${riskHtml}
       `
     });
   },
@@ -1260,3 +1314,28 @@ const CAMAEL = {
     if (overlay) overlay.classList.remove("active");
   }
 };
+
+// Global cross-navigation helper for IA risk mitigation and solution routing
+window.navigateToSolution = function(section, targetId) {
+  CAMAEL.closeModal();
+  CAMAEL.switchSection(section);
+
+  if (targetId) {
+    setTimeout(() => {
+      if (section === "recipes" && window.CAMAEL_RECIPES) {
+        const item = window.CAMAEL_RECIPES.find(r => r.id === targetId);
+        if (item) CAMAEL.showRecipeDetail(item);
+      } else if (section === "incaseof" && window.CAMAEL_CRISIS) {
+        const item = window.CAMAEL_CRISIS.find(c => c.id === targetId);
+        if (item) CAMAEL.showCrisisDetail(item);
+      } else if (section === "manual" && window.CAMAEL_MANUAL) {
+        const item = window.CAMAEL_MANUAL.find(m => m.id === targetId);
+        if (item) CAMAEL.showManualDetail(item);
+      } else if (section === "compendium" && window.CAMAEL_ITEMS) {
+        const item = window.CAMAEL_ITEMS.find(i => i.id === targetId);
+        if (item) CAMAEL.showItemDetail(item);
+      }
+    }, 150);
+  }
+};
+
