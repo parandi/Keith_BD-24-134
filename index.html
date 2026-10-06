@@ -12,26 +12,151 @@
   <!-- Fullscreen Screen Strobe for Optical Morse Signalling -->
   <div id="morseStrobeScreen" class="morse-strobe-screen"></div>
 
-  <!-- Top Navigation Header (Inspired by User Reference) -->
+  <!-- Top Navigation Header (Minimalist Modernist Swiss Grid) -->
   <header class="top-header">
-    <div class="brand-wrapper">
-      <div class="brand-logo">⚔️ CAMAEL</div>
-      <div class="brand-text">
-        <span class="brand-title">CAMAEL PROTOCOL</span>
-        <span class="brand-subtitle">Guardian of Strength, Courage & Justice • 100% Offline</span>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button id="swissMenuBtn" class="pill-btn" style="padding: 6px 12px; font-weight: 700; font-family: var(--font-mono); letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 6px;">
+        ☰ 00 // INDEX
+      </button>
+
+      <div class="brand-wrapper">
+        <div class="brand-logo" style="border-color: var(--accent-tactical); color: var(--accent-tactical);">⚔️ CAMAEL</div>
+        <div class="brand-text">
+          <span class="brand-title">CAMAEL PROTOCOL</span>
+          <span class="brand-subtitle">Guardian of Strength, Courage & Justice • 100% Offline</span>
+        </div>
       </div>
     </div>
 
-    <nav class="top-nav">
-      <button class="nav-link" data-section="map">Map</button>
-      <button class="nav-link" data-section="recipes">Recipes</button>
-      <button class="nav-link active" data-section="compendium">Compendium</button>
-      <button class="nav-link" data-section="incaseof">In Case Of</button>
-      <button class="nav-link" data-section="manual">Field Manual</button>
-      <button class="nav-link" data-section="radio">Radio & Comms</button>
-      <button class="nav-link" data-section="logbook">Logbook</button>
-    </nav>
+    <!-- Persistent SOS Cheat Sheet Header Trigger -->
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button id="sosCheatSheetBtn" class="pill-btn" style="background-color: var(--accent-alert); color: #fff; border-color: var(--accent-alert); font-weight: 800; font-family: var(--font-mono); font-size: 11px; padding: 8px 16px; letter-spacing: 0.06em; box-shadow: 0 0 15px rgba(255,59,48,0.3);">
+        ⚡ SOS // CHEAT SHEET
+      </button>
+    </div>
   </header>
+
+  <!-- Swiss Index Slide-Out Navigation Drawer -->
+  <div id="swissDrawerOverlay" class="swiss-drawer-overlay">
+    <div class="swiss-drawer-panel">
+      <div class="swiss-drawer-header">
+        <span class="swiss-drawer-title">SYSTEM DIRECTORY // 07 MODULES</span>
+        <button id="swissDrawerCloseBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="swiss-drawer-nav">
+        <button class="swiss-nav-item active" data-section="compendium">
+          <span><span class="swiss-nav-index">01</span>SCAVENGER'S COMPENDIUM</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">FORAGE & TAXONOMY</span>
+        </button>
+        <button class="swiss-nav-item" data-section="gear">
+          <span><span class="swiss-nav-index">02</span>GEAR, VAULT & PLANNER</span>
+          <span style="font-size: 10px; color: var(--accent-tactical);">TELEMETRY & ALTS</span>
+        </button>
+        <button class="swiss-nav-item" data-section="map">
+          <span><span class="swiss-nav-index">03</span>OFFLINE FIELD CARTOGRAPHY</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">VECTOR TOPO</span>
+        </button>
+        <button class="swiss-nav-item" data-section="recipes">
+          <span><span class="swiss-nav-index">04</span>SURVIVAL KITCHEN & RATIONS</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">LIFESAVERS & PANTRY</span>
+        </button>
+        <button class="swiss-nav-item" data-section="manual">
+          <span><span class="swiss-nav-index">05</span>FIELD MANUAL & BLUEPRINTS</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">VISUAL SVG GUIDES</span>
+        </button>
+        <button class="swiss-nav-item" data-section="incaseof">
+          <span><span class="swiss-nav-index">06</span>CRISIS PLAYBOOKS & TRIAGE</span>
+          <span style="font-size: 10px; color: var(--accent-alert);">IMMEDIATE 60s ACTION</span>
+        </button>
+        <button class="swiss-nav-item" data-section="radio">
+          <span><span class="swiss-nav-index">07</span>EMERGENCY COMMS & MORSE</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">SHORTWAVE / NATO</span>
+        </button>
+        <button class="swiss-nav-item" data-section="logbook">
+          <span><span class="swiss-nav-index">08</span>ENCRYPTED ICE MANIFEST</span>
+          <span style="font-size: 10px; color: var(--text-secondary);">LOCAL BACKUP</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOS Emergency Full-Screen Overlay ("The Exam Cheat Sheet") -->
+  <div id="sosOverlay" class="sos-overlay">
+    <div class="sos-header">
+      <div class="sos-header-title">
+        <span style="color: var(--accent-alert);">⚡</span>
+        <span>CRITICAL EMERGENCY CHEAT SHEET // ZERO FLUFF</span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button id="toggleUltraReserveBtn" class="pill-btn" style="border-color: #555; font-family: var(--font-mono); font-size: 10px; padding: 6px 12px;">
+          🔋 ULTRA-RESERVE OLED: OFF
+        </button>
+        <button id="sosCloseBtn" class="modal-close-btn">&times;</button>
+      </div>
+    </div>
+
+    <div class="sos-grid">
+      <!-- 1. CPR Quick Card -->
+      <div class="sos-card" onclick="window.navigateToSolution('incaseof', 'crisis_cpr'); CAMAEL.closeSosOverlay();">
+        <div class="sos-card-top">
+          <div class="sos-card-title">🫀 CARDIAC ARREST / CPR</div>
+          <span class="card-tier-badge badge-danger">0-4 MINS</span>
+        </div>
+        <p class="sos-card-desc">Hard flat ground. Center sternum push 2 to 2.4 inches. 100-120 BPM tempo without stopping.</p>
+        <div class="sos-card-action">START CPR METRONOME & ACTION PLAN &rarr;</div>
+      </div>
+
+      <!-- 2. Poison Quick Card -->
+      <div class="sos-card" onclick="window.navigateToSolution('recipes', 'rec_charcoal_slurry'); CAMAEL.closeSosOverlay();">
+        <div class="sos-card-top">
+          <div class="sos-card-title">☠️ TOXIC POISONING / INGESTION</div>
+          <span class="card-tier-badge badge-danger">IMMEDIATE</span>
+        </div>
+        <p class="sos-card-desc">Universal gastrointestinal sponge. Slurry of fine hardwood charcoal and water binds plant/mushroom toxins.</p>
+        <div class="sos-card-action">VIEW CHARCOAL SLURRY DOSAGE &rarr;</div>
+      </div>
+
+      <!-- 3. Severe Bleeding / Trauma Card -->
+      <div class="sos-card" onclick="window.navigateToSolution('incaseof', 'crisis_cpr'); CAMAEL.closeSosOverlay();">
+        <div class="sos-card-top">
+          <div class="sos-card-title">🩸 ARTERIAL BLEED / TOURNIQUET</div>
+          <span class="card-tier-badge badge-danger">CRITICAL</span>
+        </div>
+        <p class="sos-card-desc">Apply 2-inch band 2-3 inches above wound (never on joint). Twist windlass until pulsatile bleeding halts.</p>
+        <div class="sos-card-action">VIEW TRAUMA & SHOCK ACTION &rarr;</div>
+      </div>
+
+      <!-- 4. Water Disinfection Card -->
+      <div class="sos-card" onclick="window.navigateToSolution('compendium', 'item_bleach'); CAMAEL.closeSosOverlay();">
+        <div class="sos-card-top">
+          <div class="sos-card-title">💧 INSTANT WATER PURIFICATION</div>
+          <span class="card-tier-badge tier-s">COLD BLEACH</span>
+        </div>
+        <p class="sos-card-desc">Exactly 2 drops unscented household bleach (6-8.25%) per 1L clear water (4 drops if cloudy). Wait 30 mins.</p>
+        <div class="sos-card-action">VIEW CHEMICAL PURIFICATION MATRIX &rarr;</div>
+      </div>
+
+      <!-- 5. Nuclear Fallout Card -->
+      <div class="sos-card" onclick="window.navigateToSolution('incaseof', 'crisis_nuclear'); CAMAEL.closeSosOverlay();">
+        <div class="sos-card-top">
+          <div class="sos-card-title">☢️ NUCLEAR DETONATION // 7-10 RULE</div>
+          <span class="card-tier-badge badge-danger">SHELTER</span>
+        </div>
+        <p class="sos-card-desc">Every 7x increase in time reduces radiation dose rate by factor of 10. Stay deep inside masonry shelter.</p>
+        <div class="sos-card-action">OPEN 7-10 DECAY CALCULATOR &rarr;</div>
+      </div>
+
+      <!-- 6. Emergency Distress Broadcast Card -->
+      <div class="sos-card" onclick="window.navigateToSolution('radio', 'radio_morse'); CAMAEL.closeSosOverlay();">
+        <div class="sos-card-top">
+          <div class="sos-card-title">📻 DISTRESS FREQUENCIES & SOS</div>
+          <span class="card-tier-badge tier-s">VHF / MORSE</span>
+        </div>
+        <p class="sos-card-desc">VHF Ch 16 (156.800 MHz) & Air Distress (121.500 MHz). Instant 1-touch optical and audio Morse SOS beacon.</p>
+        <div class="sos-card-action">LAUNCH MORSE TRANSCEIVER & FREQS &rarr;</div>
+      </div>
+    </div>
+  </div>
 
   <!-- Sub-Header Controls & Search Bar -->
   <div class="sub-header">
@@ -57,6 +182,105 @@
 
   <!-- Main Viewport Container -->
   <main class="main-container">
+
+    <!-- 0. SECTION: GEAR, TELEMETRY & TRIP PLANNER -->
+    <section id="section-gear" class="section-view">
+      <!-- 4-Gauge Survival Telemetry Row -->
+      <div class="telemetry-row">
+        <div class="telemetry-card">
+          <div class="telemetry-label">
+            <span>💧 WATER RESERVES</span>
+            <span class="substitute-badge">TELEMETRY</span>
+          </div>
+          <div id="telemetryWaterVal" class="telemetry-value">6.5 L</div>
+          <div id="telemetryWaterStatus" class="telemetry-status">STABLE // 3.2 DAYS</div>
+        </div>
+
+        <div class="telemetry-card">
+          <div class="telemetry-label">
+            <span>🩹 MEDICAL UNITS</span>
+            <span class="substitute-badge">TRAUMA</span>
+          </div>
+          <div id="telemetryMedVal" class="telemetry-value">04 UNITS</div>
+          <div id="telemetryMedStatus" class="telemetry-status alert">CRITICAL LOW // RESTOCK</div>
+        </div>
+
+        <div class="telemetry-card">
+          <div class="telemetry-label">
+            <span>🍲 FOOD RATIONS</span>
+            <span class="substitute-badge">CALORIES</span>
+          </div>
+          <div id="telemetryFoodVal" class="telemetry-value">3.5 DAYS</div>
+          <div id="telemetryFoodStatus" class="telemetry-status">RATIONED // 1800 KCAL</div>
+        </div>
+
+        <div class="telemetry-card">
+          <div class="telemetry-label">
+            <span>⚡ POWER & FUEL</span>
+            <span class="substitute-badge">BATTERY</span>
+          </div>
+          <div id="telemetryPowerVal" class="telemetry-value">84% / 42Wh</div>
+          <div id="telemetryPowerStatus" class="telemetry-status">SOLAR READY // RESERVE OK</div>
+        </div>
+      </div>
+
+      <!-- Trip Loadout Generator Controls -->
+      <div class="gear-planner-box">
+        <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent-tactical); letter-spacing: 0.08em;">
+          TRIP LOADOUT GENERATOR // VECTORS: BIOME x LOCATION x DURATION x PARTY
+        </div>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+          Calculates mandatory field gear with built-in accordion fallbacks and wildcraft substitutes for zero-gear emergencies.
+        </p>
+
+        <div class="planner-controls-grid">
+          <div>
+            <label class="form-label">TARGET BIOME</label>
+            <select id="plannerBiomeSelect" class="planner-select">
+              <option value="Forest & Woodland">Forest & Woodland</option>
+              <option value="Wetland & Freshwater">Wetland & Freshwater</option>
+              <option value="Urban & Industrial Ruins">Urban & Industrial Ruins</option>
+              <option value="Coastal & Maritime">Coastal & Maritime</option>
+              <option value="Arid & Grassland">Arid & Grassland</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">EXPEDITION DURATION</label>
+            <select id="plannerDurationSelect" class="planner-select">
+              <option value="day">Day Trek (&lt; 12 Hours)</option>
+              <option value="overnight" selected>Overnight Camp (24 Hours)</option>
+              <option value="multiday">Multi-Day Trek (3–5 Days)</option>
+              <option value="grid_down">Extended Grid-Down (7+ Days)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">PARTY SIZE</label>
+            <select id="plannerPartySelect" class="planner-select">
+              <option value="1">Solo Operative (1 Person)</option>
+              <option value="2" selected>Duo Team (2 Persons)</option>
+              <option value="4">Small Squad (3–5 Persons)</option>
+              <option value="8">Expedition Group (6+ Persons)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommended Loadouts List with Accordion Substitutes -->
+      <div style="padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="font-size: 14px; font-weight: 700; font-family: var(--font-mono); letter-spacing: 0.04em;">
+            MANDATORY LOADOUT & IMPROVISED SUBSTITUTES (TAP TO EXPAND)
+          </h3>
+          <span id="loadoutCountBadge" class="badge-count">6 Items</span>
+        </div>
+
+        <div id="gearLoadoutList">
+          <!-- Dynamically Injected via JS -->
+        </div>
+      </div>
+    </section>
 
     <!-- 1. SECTION: MAP (World Cartography & Waypoints) -->
     <section id="section-map" class="section-view">
@@ -289,6 +513,7 @@
   <script src="js/data/world-geo.js"></script>
   <script src="js/data/recipes-data.js"></script>
   <script src="js/data/items-data.js"></script>
+  <script src="js/data/gear-data.js"></script>
   <script src="js/data/crisis-data.js"></script>
   <script src="js/data/manual-data.js"></script>
   <script src="js/data/radio-data.js"></script>

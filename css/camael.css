@@ -5,25 +5,50 @@
    ========================================================================== */
 
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #111111;
-  --bg-tertiary: #161616;
+  --bg-primary: #080808;
+  --bg-secondary: #121212;
+  --bg-tertiary: #181818;
   --bg-card: #0d0d0d;
-  --bg-card-hover: #141414;
-  --border-color: rgba(255, 255, 255, 0.12);
-  --border-light: rgba(255, 255, 255, 0.22);
-  --text-primary: #ffffff;
-  --text-secondary: #888888;
-  --text-muted: #555555;
+  --bg-card-hover: #161616;
+  --border-color: #222222;
+  --border-light: #333333;
+  --border-focus: #444444;
+  --radius-soft: 4px;
+  --text-primary: #f5f5f7;
+  --text-secondary: #8e8e93;
+  --text-muted: #48484a;
   
   --accent-white: #ffffff;
-  --accent-alert: #ff4d4d;
-  --accent-warn: #ffaa00;
-  --accent-safe: #00dd88;
-  --accent-info: #4da6ff;
+  --accent-tactical: #ff7a00;
+  --accent-alert: #ff3b30;
+  --accent-warn: #ff9500;
+  --accent-safe: #30d158;
+  --accent-info: #0a84ff;
 
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "SF Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, "Courier New", monospace;
+}
+
+/* Ultra-Battery Reserve OLED Mode */
+body.ultra-reserve-mode {
+  --bg-primary: #000000 !important;
+  --bg-secondary: #000000 !important;
+  --bg-tertiary: #050505 !important;
+  --bg-card: #000000 !important;
+  --bg-card-hover: #080808 !important;
+  --border-color: #1a1a1a !important;
+  --border-light: #222222 !important;
+  --text-primary: #e0e0e0 !important;
+  --text-secondary: #777777 !important;
+  --accent-tactical: #ff7a00 !important;
+  animation: none !important;
+  transition: none !important;
+}
+body.ultra-reserve-mode * {
+  text-shadow: none !important;
+  box-shadow: none !important;
+  animation: none !important;
+  transition: none !important;
 }
 
 * {
@@ -845,3 +870,333 @@ html, body {
     height: 360px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Swiss Index Slide-Out Navigation Drawer
+   -------------------------------------------------------------------------- */
+.swiss-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s ease;
+}
+
+.swiss-drawer-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.swiss-drawer-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 20px 0 50px rgba(0, 0, 0, 0.8);
+}
+
+.swiss-drawer-overlay.active .swiss-drawer-panel {
+  transform: translateX(0);
+}
+
+.swiss-drawer-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.swiss-drawer-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.swiss-drawer-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.swiss-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: none;
+  border-left: 2px solid transparent;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-left-color 0.15s ease;
+}
+
+.swiss-nav-item:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.swiss-nav-item.active {
+  background-color: var(--bg-tertiary);
+  border-left-color: var(--accent-tactical);
+  color: var(--accent-tactical);
+}
+
+.swiss-nav-index {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-right: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   SOS Cheat Sheet Emergency Full-Screen Overlay
+   -------------------------------------------------------------------------- */
+.sos-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #080808;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  overflow-y: auto;
+}
+
+.sos-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sos-header {
+  position: sticky;
+  top: 0;
+  background-color: #0d0d0d;
+  border-bottom: 2px solid var(--accent-alert);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sos-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+  font-family: var(--font-mono);
+}
+
+.sos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 24px;
+}
+
+.sos-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-soft);
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sos-card:hover {
+  border-color: var(--accent-alert);
+  background-color: var(--bg-card-hover);
+}
+
+.sos-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.sos-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sos-card-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.sos-card-action {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-alert);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   Gear & Vault: Telemetry Readouts & Loadout Accordion
+   -------------------------------------------------------------------------- */
+.telemetry-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+}
+
+.telemetry-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-soft);
+  background-color: var(--bg-card);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.telemetry-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+}
+
+.telemetry-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.telemetry-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-safe);
+}
+
+.telemetry-status.warn {
+  color: var(--accent-warn);
+}
+
+.telemetry-status.alert {
+  color: var(--accent-alert);
+}
+
+.gear-planner-box {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+}
+
+.planner-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.planner-select {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-soft);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  outline: none;
+  width: 100%;
+}
+
+.planner-select:focus {
+  border-color: var(--accent-tactical);
+}
+
+.gear-item-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-soft);
+  background-color: var(--bg-card);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  transition: border-color 0.15s ease;
+}
+
+.gear-item-card:hover {
+  border-color: var(--border-focus);
+}
+
+.gear-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.gear-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gear-substitutes-panel {
+  display: none;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.gear-substitutes-panel.active {
+  display: block;
+}
+
+.substitute-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background-color: rgba(255, 122, 0, 0.12);
+  color: var(--accent-tactical);
+  border: 1px solid rgba(255, 122, 0, 0.3);
+  margin-right: 6px;
+}
+

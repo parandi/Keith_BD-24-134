@@ -27,8 +27,11 @@ const CAMAEL = {
   // ------------------------------------------------------------------------
   init() {
     this.initNavigation();
+    this.initSwissDrawer();
+    this.initSosOverlay();
     this.initSearchAndFilters();
     this.renderCompendium();
+    this.renderGearPlanner();
     this.renderRecipes();
     this.renderCrisis();
     this.renderManual();
@@ -54,15 +57,16 @@ const CAMAEL = {
   },
 
   // ------------------------------------------------------------------------
-  // Navigation Routing
+  // Navigation Routing & Swiss Drawer
   // ------------------------------------------------------------------------
   initNavigation() {
-    const navLinks = document.querySelectorAll(".nav-link");
+    const navLinks = document.querySelectorAll(".nav-link, .swiss-nav-item");
     navLinks.forEach(link => {
       link.addEventListener("click", (e) => {
         e.preventDefault();
         const target = link.dataset.section;
         this.switchSection(target);
+        this.closeSwissDrawer();
       });
     });
 
@@ -73,11 +77,80 @@ const CAMAEL = {
     }
   },
 
+  initSwissDrawer() {
+    const menuBtn = document.getElementById("swissMenuBtn");
+    const overlay = document.getElementById("swissDrawerOverlay");
+    const closeBtn = document.getElementById("swissDrawerCloseBtn");
+
+    if (menuBtn && overlay) {
+      menuBtn.addEventListener("click", () => this.openSwissDrawer());
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => this.closeSwissDrawer());
+    }
+    if (overlay) {
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) this.closeSwissDrawer();
+      });
+    }
+  },
+
+  openSwissDrawer() {
+    const overlay = document.getElementById("swissDrawerOverlay");
+    if (overlay) overlay.classList.add("active");
+  },
+
+  closeSwissDrawer() {
+    const overlay = document.getElementById("swissDrawerOverlay");
+    if (overlay) overlay.classList.remove("active");
+  },
+
+  // ------------------------------------------------------------------------
+  // SOS Full-Screen Overlay & Ultra-Reserve Mode
+  // ------------------------------------------------------------------------
+  initSosOverlay() {
+    const sosBtn = document.getElementById("sosCheatSheetBtn");
+    const overlay = document.getElementById("sosOverlay");
+    const closeBtn = document.getElementById("sosCloseBtn");
+    const reserveToggleBtn = document.getElementById("toggleUltraReserveBtn");
+
+    if (sosBtn && overlay) {
+      sosBtn.addEventListener("click", () => this.openSosOverlay());
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => this.closeSosOverlay());
+    }
+    if (reserveToggleBtn) {
+      reserveToggleBtn.addEventListener("click", () => this.toggleUltraReserve());
+    }
+  },
+
+  openSosOverlay() {
+    const overlay = document.getElementById("sosOverlay");
+    if (overlay) overlay.classList.add("active");
+  },
+
+  closeSosOverlay() {
+    const overlay = document.getElementById("sosOverlay");
+    if (overlay) overlay.classList.remove("active");
+  },
+
+  toggleUltraReserve() {
+    document.body.classList.toggle("ultra-reserve-mode");
+    const isUltra = document.body.classList.contains("ultra-reserve-mode");
+    const btn = document.getElementById("toggleUltraReserveBtn");
+    if (btn) {
+      btn.textContent = isUltra ? "🔋 ULTRA-RESERVE OLED: ACTIVE" : "🔋 ULTRA-RESERVE OLED: OFF";
+      btn.style.color = isUltra ? "var(--accent-tactical)" : "#fff";
+      btn.style.borderColor = isUltra ? "var(--accent-tactical)" : "#555";
+    }
+  },
+
   switchSection(sectionId) {
     this.activeSection = sectionId;
 
-    // Update nav links
-    document.querySelectorAll(".nav-link").forEach(link => {
+    // Update nav links & drawer active classes
+    document.querySelectorAll(".nav-link, .swiss-nav-item").forEach(link => {
       link.classList.toggle("active", link.dataset.section === sectionId);
     });
 
@@ -133,6 +206,19 @@ const CAMAEL = {
           { label: "Materials", key: "materials" },
           { label: "☠️ Toxic Hazards", key: "toxic" }
         ], (key) => this.filterCompendium(key, searchInput.value));
+        break;
+
+      case "gear":
+        titleEl.textContent = "Gear, Vault & Telemetry Planner";
+        countEl.textContent = `${window.CAMAEL_GEAR ? window.CAMAEL_GEAR.length : 0} Mandatory Items`;
+        this.createFilterPills([
+          { label: "All Loadouts", key: "all", active: true },
+          { label: "💧 Water Systems", key: "water" },
+          { label: "🔥 Fire & Thermal", key: "fire" },
+          { label: "🩹 Medical Trauma", key: "medical" },
+          { label: "🏕️ Shelter Systems", key: "shelter" },
+          { label: "🧭 Navigation Azimuth", key: "navigation" }
+        ], (key) => this.filterGear(key, searchInput.value));
         break;
 
       case "recipes":
@@ -340,6 +426,161 @@ const CAMAEL = {
         ${riskHtml}
       `
     });
+  },
+
+  // ------------------------------------------------------------------------
+  // Module: Gear, Telemetry & Trip Planner (Phase 6 Implementation)
+  // ------------------------------------------------------------------------
+  renderGearPlanner(gearList = window.CAMAEL_GEAR) {
+    const container = document.getElementById("gearLoadoutList");
+    const countBadge = document.getElementById("loadoutCountBadge");
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (countBadge && gearList) {
+      countBadge.textContent = `${gearList.length} Items`;
+    }
+
+    if (!gearList || gearList.length === 0) {
+      container.innerHTML = `<div style="padding: 24px; color: var(--text-secondary); text-align: center;">No gear matching active filters.</div>`;
+      return;
+    }
+
+    gearList.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "gear-item-card";
+      card.id = `gear-card-${item.id}`;
+
+      const substitutesHtml = item.substitutes && item.substitutes.length > 0
+        ? item.substitutes.map((sub, idx) => `
+            <div style="margin-top: 10px; padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 700; color: #fff; font-size: 13px;">
+                  <span class="substitute-badge">ALT ${idx + 1} // ${sub.tier.toUpperCase()}</span>
+                  ${sub.name}
+                </span>
+                ${sub.sourceSection ? `
+                  <button onclick="window.navigateToSolution('${sub.sourceSection}', '${sub.sourceId}')" class="pill-btn" style="font-size: 10px; padding: 2px 8px; color: var(--accent-tactical); border-color: var(--accent-tactical);">
+                    VIEW ${sub.sourceSection.toUpperCase()} &rarr;
+                  </button>
+                ` : ''}
+              </div>
+              <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin: 0;">${sub.instructions}</p>
+            </div>
+          `).join('')
+        : `<p style="font-size: 11px; color: var(--text-secondary); margin: 0;">No improvised substitutes available for this critical item.</p>`;
+
+      card.innerHTML = `
+        <div class="gear-item-header" onclick="CAMAEL.toggleGearSubstitute('${item.id}')">
+          <div>
+            <div class="gear-item-title">
+              <span>${item.name}</span>
+              <span class="card-tier-badge tier-s" style="font-size: 9px;">${item.essentialRating}</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${item.summary}</div>
+            <div style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-tactical); margin-top: 6px;">
+              STANDARD PACK QTY: ${item.baseQty}
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="accordion-arrow-${item.id}" style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">
+              [+] EXPAND ALTS
+            </span>
+          </div>
+        </div>
+
+        <div id="substitutes-panel-${item.id}" class="gear-substitutes-panel">
+          <div style="font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--accent-tactical); letter-spacing: 0.08em; margin-bottom: 8px;">
+            FALLBACK CHAIN & WILDCRAFT SUBSTITUTES:
+          </div>
+          ${substitutesHtml}
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+
+    // Wire up trip planner selectors
+    const biomeSelect = document.getElementById("plannerBiomeSelect");
+    const durationSelect = document.getElementById("plannerDurationSelect");
+    const partySelect = document.getElementById("plannerPartySelect");
+
+    if (biomeSelect && !biomeSelect.dataset.wired) {
+      biomeSelect.dataset.wired = "true";
+      const updateTelemetry = () => this.calculateTripTelemetry();
+      biomeSelect.addEventListener("change", updateTelemetry);
+      if (durationSelect) durationSelect.addEventListener("change", updateTelemetry);
+      if (partySelect) partySelect.addEventListener("change", updateTelemetry);
+    }
+  },
+
+  toggleGearSubstitute(itemId) {
+    const panel = document.getElementById(`substitutes-panel-${itemId}`);
+    const arrow = document.getElementById(`accordion-arrow-${itemId}`);
+    if (panel) {
+      const isActive = panel.classList.toggle("active");
+      if (arrow) {
+        arrow.textContent = isActive ? "[-] HIDE ALTS" : "[+] EXPAND ALTS";
+        arrow.style.color = isActive ? "var(--accent-tactical)" : "var(--text-secondary)";
+      }
+    }
+  },
+
+  calculateTripTelemetry() {
+    const biome = document.getElementById("plannerBiomeSelect")?.value || "Forest & Woodland";
+    const duration = document.getElementById("plannerDurationSelect")?.value || "overnight";
+    const party = parseInt(document.getElementById("plannerPartySelect")?.value || "2", 10);
+
+    let days = 1;
+    if (duration === "day") days = 0.5;
+    else if (duration === "overnight") days = 1;
+    else if (duration === "multiday") days = 3;
+    else if (duration === "grid_down") days = 7;
+
+    // Water calculation: 3L / person / day (adjusted for arid/desert)
+    const waterMultiplier = biome.includes("Arid") ? 4.5 : 3.0;
+    const totalWater = (party * days * waterMultiplier).toFixed(1);
+
+    // Calories: 2200 kcal / person / day
+    const foodDays = days;
+
+    // Med units
+    const medUnits = Math.max(2, party * (days > 2 ? 3 : 2));
+
+    // Telemetry updates
+    const waterVal = document.getElementById("telemetryWaterVal");
+    const waterStatus = document.getElementById("telemetryWaterStatus");
+    const medVal = document.getElementById("telemetryMedVal");
+    const foodVal = document.getElementById("telemetryFoodVal");
+
+    if (waterVal) waterVal.textContent = `${totalWater} L`;
+    if (waterStatus) waterStatus.textContent = `${party} PPL // ${days} DAYS TARGET`;
+    if (medVal) medVal.textContent = `${medUnits < 10 ? '0' + medUnits : medUnits} UNITS`;
+    if (foodVal) foodVal.textContent = `${foodDays} DAYS`;
+
+    // Filter gear list based on biome
+    if (window.CAMAEL_GEAR) {
+      const filtered = window.CAMAEL_GEAR.filter(g => !g.biomes || g.biomes.some(b => b.includes(biome.split(' ')[0])));
+      this.renderGearPlanner(filtered);
+    }
+  },
+
+  filterGear(key, query = "") {
+    let list = window.CAMAEL_GEAR || [];
+    if (key === "water") list = list.filter(g => g.category === "water");
+    else if (key === "fire") list = list.filter(g => g.category === "fire");
+    else if (key === "medical") list = list.filter(g => g.category === "medical");
+    else if (key === "shelter") list = list.filter(g => g.category === "shelter");
+    else if (key === "navigation") list = list.filter(g => g.category === "navigation");
+
+    if (query) {
+      list = list.filter(g => 
+        g.name.toLowerCase().includes(query) ||
+        g.summary.toLowerCase().includes(query) ||
+        (g.substitutes && g.substitutes.some(s => s.name.toLowerCase().includes(query) || s.instructions.toLowerCase().includes(query)))
+      );
+    }
+    this.renderGearPlanner(list);
   },
 
   // ------------------------------------------------------------------------
