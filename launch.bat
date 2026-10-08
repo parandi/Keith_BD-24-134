@@ -1,6 +1,7 @@
 @echo off
 echo =========================================================
-echo   Launching CAMAEL: Offline Survival Field Terminal
+echo   Launching CODEX CAMAEL: Offline Survival Reference
 echo =========================================================
 start "" "%~dp0index.html"
 exit
+

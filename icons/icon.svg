@@ -1,0 +1,15 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="#0c0c0b"/>
+  <rect x="24" y="24" width="464" height="464" rx="80" fill="none" stroke="#d8d1a6" stroke-width="6" stroke-opacity="0.6"/>
+  <!-- Tactical Hex / Shield Frame -->
+  <path d="M256 72 L420 156 L420 336 L256 440 L92 336 L92 156 Z" fill="#14120d" stroke="#ff4a1c" stroke-width="10"/>
+  <!-- Central Stylized Cross / Sword & Chevron (Camael Angel of Strength) -->
+  <path d="M256 120 L256 380" stroke="#d8d1a6" stroke-width="16" stroke-linecap="round"/>
+  <path d="M180 200 L332 200" stroke="#d8d1a6" stroke-width="16" stroke-linecap="round"/>
+  <path d="M190 320 L256 380 L322 320" fill="none" stroke="#22b8b8" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="140" r="14" fill="#ff4a1c"/>
+  <!-- Offline Signal Dots -->
+  <circle cx="160" cy="160" r="8" fill="#d8d1a6" opacity="0.8"/>
+  <circle cx="352" cy="160" r="8" fill="#d8d1a6" opacity="0.8"/>
+  <circle cx="256" cy="410" r="6" fill="#22b8b8"/>
+</svg>

@@ -1,7 +1,7 @@
-# ⚔️ CAMAEL: Offline Survival Directory & Emergency Field Kit
-*Guardian of Strength, Courage, and Justice*
+# ⚔️ CODEX CAMAEL
+*A life-saving digital reference. 100% offline.*
 
-A 100% offline standalone field kit and crisis survival terminal designed for emergency preparedness, extreme expeditions, and societal resilience. Zero remote CDNs, zero cloud dependencies, fully functional without internet.
+A 100% offline standalone survival reference and crisis field kit designed for emergency preparedness, extreme expeditions, and societal resilience. Zero remote CDNs, zero cloud dependencies, fully functional without internet.
 
 ---
 
@@ -14,7 +14,7 @@ A 100% offline standalone field kit and crisis survival terminal designed for em
 ### 2. Local Wi-Fi / Mobile Phone Sharing
 * Right-click `server.ps1` and select **"Run with PowerShell"** (or run `powershell -ExecutionPolicy Bypass -File server.ps1`).
 * The terminal will output your local IP (e.g. `http://192.168.x.x:8080`).
-* Open this link on your smartphone to use CAMAEL as a field guide.
+* Open this link on your smartphone to use CODEX CAMAEL as a field guide.
 
 ---
 

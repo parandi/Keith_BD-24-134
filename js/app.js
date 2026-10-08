@@ -1,6 +1,6 @@
 // ==========================================================================
-// CAMAEL: Main Application Controller
-// Guardian of Strength, Courage, and Justice
+// CODEX CAMAEL: Main Application Controller
+// A life-saving digital reference. 100% offline.
 // 100% Offline-First Architecture (Zero CDNs, Zero Remote Calls)
 // ==========================================================================
 
@@ -26,6 +26,7 @@ const CAMAEL = {
   // Initialization
   // ------------------------------------------------------------------------
   init() {
+    this.migrateStorage();
     this.initNavigation();
     this.initSwissDrawer();
     this.initSosOverlay();
@@ -41,7 +42,31 @@ const CAMAEL = {
     this.initLogbook();
     this.initModal();
 
-    console.log("CAMAEL: Offline Survival Directory Initialized. All systems operational.");
+    console.log("CODEX CAMAEL: Offline Survival Reference Initialized. All systems operational.");
+  },
+
+  migrateStorage() {
+    const legacyPrefix = "camael_";
+    const newPrefix = "codex_camael_";
+    try {
+      const keysToMigrate = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(legacyPrefix)) {
+          keysToMigrate.push(key);
+        }
+      }
+      keysToMigrate.forEach(key => {
+        const subKey = key.slice(legacyPrefix.length);
+        const newKey = `${newPrefix}${subKey}`;
+        const val = localStorage.getItem(key);
+        if (localStorage.getItem(newKey) === null && val !== null) {
+          localStorage.setItem(newKey, val);
+        }
+      });
+    } catch (e) {
+      console.warn("Storage migration exception:", e);
+    }
   },
 
   // Audio Context helper (resumed on user gesture)
@@ -630,7 +655,7 @@ const CAMAEL = {
     container.innerHTML = "";
 
     // Load saved pantry selection
-    const savedPantry = JSON.parse(localStorage.getItem("camael_pantry") || "[]");
+    const savedPantry = JSON.parse(localStorage.getItem("codex_camael_pantry") || localStorage.getItem("camael_pantry") || "[]");
 
     ingredients.forEach(ing => {
       const isChecked = savedPantry.includes(ing);
@@ -656,11 +681,11 @@ const CAMAEL = {
     document.querySelectorAll("#pantryIngredientsList input:checked").forEach(input => {
       selected.push(input.value);
     });
-    localStorage.setItem("camael_pantry", JSON.stringify(selected));
+    localStorage.setItem("codex_camael_pantry", JSON.stringify(selected));
   },
 
   matchPantryRecipes() {
-    const selected = JSON.parse(localStorage.getItem("camael_pantry") || "[]");
+    const selected = JSON.parse(localStorage.getItem("codex_camael_pantry") || localStorage.getItem("camael_pantry") || "[]");
     const countBanner = document.getElementById("pantryMatchNotice");
 
     if (selected.length === 0) {
@@ -1075,10 +1100,10 @@ const CAMAEL = {
     if (!canvas) return;
 
     // Load custom waypoints from localStorage or defaults
-    this.waypoints = JSON.parse(localStorage.getItem("camael_waypoints") || "null");
+    this.waypoints = JSON.parse(localStorage.getItem("codex_camael_waypoints") || localStorage.getItem("camael_waypoints") || "null");
     if (!this.waypoints) {
       this.waypoints = window.CAMAEL_GEO.defaultWaypoints;
-      localStorage.setItem("camael_waypoints", JSON.stringify(this.waypoints));
+      localStorage.setItem("codex_camael_waypoints", JSON.stringify(this.waypoints));
     }
 
     this.renderWaypointList();
@@ -1440,7 +1465,7 @@ const CAMAEL = {
         desc: desc || "",
         notes: "User dropped coordinate."
       });
-      localStorage.setItem("camael_waypoints", JSON.stringify(this.waypoints));
+      localStorage.setItem("codex_camael_waypoints", JSON.stringify(this.waypoints));
       this.renderWaypointList();
       this.drawMap();
     }
@@ -1456,9 +1481,9 @@ const CAMAEL = {
     fields.forEach(f => {
       const el = document.getElementById(f);
       if (el) {
-        el.value = localStorage.getItem(`camael_${f}`) || "";
+        el.value = localStorage.getItem(`codex_camael_${f}`) || localStorage.getItem(`camael_${f}`) || "";
         el.addEventListener("input", (e) => {
-          localStorage.setItem(`camael_${f}`, e.target.value);
+          localStorage.setItem(`codex_camael_${f}`, e.target.value);
         });
       }
     });
@@ -1469,16 +1494,16 @@ const CAMAEL = {
       exportBtn.addEventListener("click", () => {
         const data = {};
         fields.forEach(f => {
-          data[f] = localStorage.getItem(`camael_${f}`) || "";
+          data[f] = localStorage.getItem(`codex_camael_${f}`) || localStorage.getItem(`camael_${f}`) || "";
         });
-        data.waypoints = JSON.parse(localStorage.getItem("camael_waypoints") || "[]");
-        data.pantry = JSON.parse(localStorage.getItem("camael_pantry") || "[]");
+        data.waypoints = JSON.parse(localStorage.getItem("codex_camael_waypoints") || localStorage.getItem("camael_waypoints") || "[]");
+        data.pantry = JSON.parse(localStorage.getItem("codex_camael_pantry") || localStorage.getItem("camael_pantry") || "[]");
 
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `camael_emergency_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `codex_camael_emergency_backup_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
       });
@@ -1495,23 +1520,26 @@ const CAMAEL = {
           try {
             const data = JSON.parse(evt.target.result);
             fields.forEach(f => {
-              if (data[f] !== undefined) {
-                localStorage.setItem(`camael_${f}`, data[f]);
+              const val = data[f] !== undefined ? data[f] : (data[`codex_camael_${f}`] !== undefined ? data[`codex_camael_${f}`] : data[`camael_${f}`]);
+              if (val !== undefined) {
+                localStorage.setItem(`codex_camael_${f}`, val);
                 const el = document.getElementById(f);
-                if (el) el.value = data[f];
+                if (el) el.value = val;
               }
             });
-            if (data.waypoints) {
-              localStorage.setItem("camael_waypoints", JSON.stringify(data.waypoints));
-              this.waypoints = data.waypoints;
+            const importedWaypoints = data.waypoints || data.codex_camael_waypoints || data.camael_waypoints;
+            if (importedWaypoints) {
+              localStorage.setItem("codex_camael_waypoints", JSON.stringify(importedWaypoints));
+              this.waypoints = importedWaypoints;
               this.renderWaypointList();
               this.drawMap();
             }
-            if (data.pantry) {
-              localStorage.setItem("camael_pantry", JSON.stringify(data.pantry));
+            const importedPantry = data.pantry || data.codex_camael_pantry || data.camael_pantry;
+            if (importedPantry) {
+              localStorage.setItem("codex_camael_pantry", JSON.stringify(importedPantry));
               this.renderRecipes();
             }
-            alert("CAMAEL: Emergency Vault restored successfully.");
+            alert("CODEX CAMAEL: Emergency Vault restored successfully.");
           } catch(err) {
             alert("Error parsing backup file.");
           }
